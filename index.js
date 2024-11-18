@@ -3,6 +3,8 @@ import * as dotenv from "dotenv";
 import cors from "cors";
 import mongoose from "mongoose";
 import UserRoutes from "./routes/User.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 dotenv.config();
 
@@ -12,6 +14,20 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true })); // for form data
 
 app.use("/api/user/", UserRoutes);
+
+//Get the current file path
+const __filename = fileURLToPath(import.meta.url);
+
+//Get the directory name
+const __dirname = path.dirname(__filename);
+
+//serve static file from the assets folde
+app.use(express.static(path.join(__dirname,"./client/build")));
+
+//Route to Serve index.html
+app.get('*' , (req,res) =>{
+  res.sendFile(path.join(__dirname, " ./client/build/index.html"))
+})
 
 // error handler
 app.use((err, req, res, next) => {
